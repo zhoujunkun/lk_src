@@ -155,8 +155,15 @@ int  ble_anysys_queue(SqQueue *bleQueue)
 
    return erroType;
 }
-
-
+int my_strlen(char *str)
+ {
+     char *tmp = str;
+     while (*str)
+     {
+         str++;
+     }
+     return str - tmp;
+}
 /**************************************************************************************************
  * @fn  void ble_init(bleSend sendCallBack)
  *
@@ -170,12 +177,17 @@ int  ble_anysys_queue(SqQueue *bleQueue)
  *
  * @return      None
  */
+uint8_t  bleName[] = {"AT+NAME=SKG_4099\r\n"};
 void ble_init(bleSend sendCallBack)
 {
+	uint8_t len=0;
 	 sendFrame = sendCallBack;
 	 frameHandle.queueInvoke = &ringQueue_ops;
    frameHandle.anasys = ble_anysys_queue;
 	 frameHandle.ble = &ble_handle;
+	  
+   sendCallBack(bleName,sizeof(bleName)-1);
+
 }
 
 
