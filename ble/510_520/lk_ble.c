@@ -10,16 +10,76 @@ frame_enum_t frame_enum=frame_head;
 uint8_t fist_check=0;
 #define CHECK_SUM(now,last)  (now^last)  //dat1^dat2^dat3^dat4....
 
-	static uint8_t cnt=0,rxDatCnt=0,checksum=0,lastData=0;
+#define CHECK_STRING(now,last) (now^last)
+
+
+
+char checkConnected[] ={BLE_CONNECTED};
+char checkDisConnected[] ={BLE_DISCONNECTED};
+
+uint8_t nowCheckStrConect = 'C',strCnt;
+uint8_t nowCheckStrDisConect = 'D',strDisCnt;
+
+
+void check_connectdStatu(uint8_t data)
+{
+#if 0
+ if (CHECK_STRING(data,nowCheckStrConect) == 0)
+	{
+	     strCnt++;
+      nowCheckStrConect = checkConnected[strCnt];
+	    if(strCnt == (sizeof(checkConnected)-1) )
+       {
+			   ble_handle.ifBleConnected= true; 
+				 ble_handle.ifBleDisConnected=false;
+				 strCnt = 0;
+				 nowCheckStrConect = checkConnected[0];
+				 strDisCnt = 0;
+				 nowCheckStrDisConect = checkDisConnected[0];
+			 }
+	}else 
+	{
+		strCnt =0;
+	  nowCheckStrConect = checkConnected[0];
+	}
+
+ if (CHECK_STRING(data,nowCheckStrDisConect) == 0)
+	{
+	     strDisCnt++;
+      nowCheckStrDisConect = checkDisConnected[ strDisCnt];
+	    if(strDisCnt == (sizeof(checkDisConnected)-1)) 
+       {
+           ble_handle.ifBleConnected = false;
+			    ble_handle.ifBleDisConnected= true; 
+				 strDisCnt = 0;
+				 nowCheckStrDisConect = checkDisConnected[0];
+				 strCnt = 0;
+				 nowCheckStrConect = checkConnected[0];
+			 }
+	}else 
+	{
+		strDisCnt =0;
+	  nowCheckStrDisConect = checkDisConnected[0];
+	}
+
+#endif
+}
+
+
+
+uint8_t strSize =0;
+
 uint8_t lk_ble_checkSum(uint8_t data)
 {   
-
+	 static uint8_t cnt=0,rxDatCnt=0,checksum=0,lastData=0;	 
     uint16_t head=0xABBC;
     
     rxData.buf[rxDatCnt++] = data;
     cnt++;
     checksum = CHECK_SUM(data,lastData);
     lastData = data;
+     check_connectdStatu(data);
+
     switch (frame_enum)
     {
         case frame_head:
@@ -117,6 +177,8 @@ uint8_t  ble_anasys(uint8_t data,delegate callback)
 
 ble_handle_t  ble_handle=
 {
+    .ifBleConnected = false,
+		.ifBleDisConnected = false,
     .myanasys = ble_anasys, 
 };
 

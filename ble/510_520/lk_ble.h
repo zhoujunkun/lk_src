@@ -2,6 +2,8 @@
 #define __LK_BLE_H
 #include "stdint.h"
 #include "stdio.h"
+#include "stdbool.h"
+
 #include "ringQueue.h" 
 
 #define BLE_RXBUFF_SIZE   20     //接收缓存数字大小
@@ -15,6 +17,13 @@
 #define FRAME_RCV_OK       0xff   //接收数据成功
 
 
+#define FRAME_CONNECTED          0xEE   //蓝牙模块连接成功
+#define FRAME_DISCONNECTED       0xEF   //蓝牙模块连接断开
+
+
+
+#define BLE_CONNECTED          "CONNECTED"
+#define BLE_DISCONNECTED       "DISCONNECT"
 
 
 void ble_checksum(uint8_t *data, uint8_t size );
@@ -50,7 +59,10 @@ typedef struct
 
 typedef struct 
 {
-   anasys myanasys;
+	bool ifBleConnected ;  
+	bool ifBleDisConnected ;
+
+  anasys myanasys;
 	
 }ble_handle_t;
 
