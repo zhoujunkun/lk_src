@@ -1,8 +1,6 @@
 #ifndef  __LK_BLE_H
 #define __LK_BLE_H
-#include "stdint.h"
-#include "stdio.h"
-#include "stdbool.h"
+#include "lk_global.h"
 
 #include "ringQueue.h" 
 

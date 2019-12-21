@@ -25,6 +25,7 @@ typedef enum{smartMode=0x01,easeMode=0x02,vitalityMode=0x03,powerfulMode=0x04}ma
 
 
 
+
 //操作设备实时时间
 typedef struct
 {
