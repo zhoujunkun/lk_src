@@ -1,0 +1,14 @@
+--cpu Cortex-M0
+".\myapp\obj\core_cm0.o"
+".\myapp\obj\system_cmsdk.o"
+".\myapp\obj\startup_cmsdk_cm0.o"
+".\myapp\obj\sys.o"
+".\myapp\obj\uart.o"
+".\myapp\obj\main.o"
+".\myapp\obj\lk_ble.o"
+".\myapp\obj\lk_ble_ops.o"
+".\myapp\obj\ringqueue.o"
+--strict --scatter ".\myapp\obj\demo.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\myapp\lst\demo.map" -o .\myapp\obj\demo.axf

@@ -1,0 +1,11 @@
+--cpu Cortex-M0
+".\obj\core_cm0.o"
+".\obj\system_cmsdk.o"
+".\obj\startup_cmsdk_cm0.o"
+".\obj\sys.o"
+".\obj\uart.o"
+".\obj\main.o"
+--strict --scatter ".\obj\test.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\lst\test.map" -o .\obj\test.axf
