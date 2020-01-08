@@ -1,0 +1,63 @@
+Dependencies for Project 'demo', Target 'Target 1': (DO NOT MODIFY !)
+F (.\common\CoreSupport\core_cm0.c)(0x56F4AADC)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\core_cm0.o --omf_browse .\myapp\obj\core_cm0.crf --depend .\myapp\obj\core_cm0.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+F (.\common\DeviceSupport\arm\cmsdk\system_CMSDK.c)(0x5C122DB8)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\system_cmsdk.o --omf_browse .\myapp\obj\system_cmsdk.crf --depend .\myapp\obj\system_cmsdk.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (common\DeviceSupport\arm\cmsdk\system_CMSDK.h)(0x59F3DCEC)
+I (common\DeviceSupport\arm\cmsdk\CMSDK_CM0.h)(0x5B84BC6D)
+I (.\common\CoreSupport\core_cm0.h)(0x56F4AADC)
+I (.\common\CoreSupport\core_cmInstr.h)(0x56F4AADC)
+I (.\common\CoreSupport\core_cmFunc.h)(0x56F4AADC)
+F (.\common\DeviceSupport\arm\cmsdk\Startup\arm\startup_CMSDK_CM0.s)(0x59FAA1EE)(--cpu Cortex-M0 -g --apcs=interwork -I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0--pd "__UVISION_VERSION SETA 526"--list .\myapp\lst\startup_cmsdk_cm0.lst --xref -o .\myapp\obj\startup_cmsdk_cm0.o --depend .\myapp\obj\startup_cmsdk_cm0.d)
+F (.\common\Drivers\source\sys.c)(0x5CB927CC)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\sys.o --omf_browse .\myapp\obj\sys.crf --depend .\myapp\obj\sys.d)
+I (.\common\DeviceSupport\arm\cmsdk\CMSDK_CM0.h)(0x5B84BC6D)
+I (.\common\CoreSupport\core_cm0.h)(0x56F4AADC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (.\common\CoreSupport\core_cmInstr.h)(0x56F4AADC)
+I (.\common\CoreSupport\core_cmFunc.h)(0x56F4AADC)
+I (.\common\DeviceSupport\arm\cmsdk\system_CMSDK.h)(0x59F3DCEC)
+I (.\common\Drivers\include\sys.h)(0x5CB8368A)
+I (.\common\Drivers\include\ioconfig.h)(0x5C8F8108)
+F (.\common\Drivers\source\uart.c)(0x5B2097CE)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\uart.o --omf_browse .\myapp\obj\uart.crf --depend .\myapp\obj\uart.d)
+I (.\common\DeviceSupport\arm\cmsdk\CMSDK_CM0.h)(0x5B84BC6D)
+I (.\common\CoreSupport\core_cm0.h)(0x56F4AADC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (.\common\CoreSupport\core_cmInstr.h)(0x56F4AADC)
+I (.\common\CoreSupport\core_cmFunc.h)(0x56F4AADC)
+I (.\common\DeviceSupport\arm\cmsdk\system_CMSDK.h)(0x59F3DCEC)
+I (.\common\Drivers\include\uart.h)(0x59EDD2FF)
+I (.\common\Drivers\include\sys.h)(0x5CB8368A)
+F (.\myapp\src\main.c)(0x5E0021F0)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\main.o --omf_browse .\myapp\obj\main.crf --depend .\myapp\obj\main.d)
+I (.\common\DeviceSupport\arm\cmsdk\CMSDK_CM0.h)(0x5B84BC6D)
+I (.\common\CoreSupport\core_cm0.h)(0x56F4AADC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (.\common\CoreSupport\core_cmInstr.h)(0x56F4AADC)
+I (.\common\CoreSupport\core_cmFunc.h)(0x56F4AADC)
+I (.\common\DeviceSupport\arm\cmsdk\system_CMSDK.h)(0x59F3DCEC)
+I (.\common\Drivers\include\uart.h)(0x59EDD2FF)
+I (.\common\Drivers\include\sys.h)(0x5CB8368A)
+I (.\common\Drivers\include\ioconfig.h)(0x5C8F8108)
+I (..\ble\lk_ble_ops.h)(0x5E001A24)
+I (..\ble\lk_ble.h)(0x5DFD93FA)
+I (..\..\ble_protocol\lk_global.h)(0x5E00228B)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599EDB3E)
+I (..\queue\ringQueue.h)(0x5DF8A0C6)
+F (..\ble\lk_ble.c)(0x5E002957)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\lk_ble.o --omf_browse .\myapp\obj\lk_ble.crf --depend .\myapp\obj\lk_ble.d)
+I (..\ble\lk_ble.h)(0x5DFD93FA)
+I (..\..\ble_protocol\lk_global.h)(0x5E00228B)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599EDB3E)
+I (..\queue\ringQueue.h)(0x5DF8A0C6)
+F (..\ble\lk_ble_ops.c)(0x5E15C290)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\lk_ble_ops.o --omf_browse .\myapp\obj\lk_ble_ops.crf --depend .\myapp\obj\lk_ble_ops.d)
+I (..\ble\lk_ble_ops.h)(0x5E001A24)
+I (..\ble\lk_ble.h)(0x5DFD93FA)
+I (..\..\ble_protocol\lk_global.h)(0x5E00228B)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599EDB3E)
+I (..\queue\ringQueue.h)(0x5DF8A0C6)
+F (..\queue\ringQueue.c)(0x5E00294B)(--c99 -c --cpu Cortex-M0 -g -O0 --apcs=interwork --split_sections -I .\myapp\inc -I .\common\CoreSupport -I .\common\DeviceSupport\arm\cmsdk -I .\common\Drivers\include -I ..\queue -I ..\ble -I ..\..\ble_protocol-I.\RTE\_Target_1-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Mesilicon\ME32\1.4.0-D__UVISION_VERSION="526"-o .\myapp\obj\ringqueue.o --omf_browse .\myapp\obj\ringqueue.crf --depend .\myapp\obj\ringqueue.d)
+I (..\queue\ringQueue.h)(0x5DF8A0C6)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
