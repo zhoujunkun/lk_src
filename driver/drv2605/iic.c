@@ -21,7 +21,7 @@ void iic_init(uint8_t addr)
 void iic_delay(void)
 {
     volatile uint8_t  nX;    //一定要加 volatile 不然会被优化掉
-    nX = 20;
+    nX = 128;
     while (nX)
     {
         nX--;
@@ -62,24 +62,25 @@ void iic_stop(void)
 bool iic_wait_ack(void)
 {
     bool flag;
-    u16 TimeOut;
+    uint16_t TimeOut;
 
     iic_data_high();
     iic_delay();
-    iic_clk_high();
+    iic_clk_low();
     iic_delay();
-    flag=FALSE;
-    TimeOut=20000;
+	  iic_clk_high(); //zjk add
+    flag=false;
+    TimeOut=200;
     do
     {
         if (!(iic_read_data()))       //变低了?
         {
-            flag = TRUE;
+            flag = true;
             break;
         }
     }while (--TimeOut);
-    iic_clk_low();
-    iic_delay();
+   // iic_clk_low();
+  //  iic_delay();
     
     return flag;
 }
@@ -111,9 +112,9 @@ void iic_ack(E_I2cAck ack)
 ************************************************/
 bool iic_send_8bits(uint8_t byte)
 {
-    u8 i;
+    uint8_t i;
     bool flag;
-    flag=FALSE;
+    flag=false;
     i = 8;
     do
     {   
@@ -130,7 +131,7 @@ bool iic_send_8bits(uint8_t byte)
     }while(--i);
     /* check ack */
     //I2C_DATA_INPUT;
-    flag = I2cWaitAck();
+    flag = iic_wait_ack();
     //I2C_DATA_OUTPUT;
     return flag;
 }
@@ -139,13 +140,13 @@ bool iic_send_8bits(uint8_t byte)
 /***********************************************
 *   I2C receive one byte
 ************************************************/
-u8 iic_rev_8bits(E_I2cAck ack)
+uint8_t iic_rev_8bits(E_I2cAck ack)
 {
-    u8 i,byte;
+    uint8_t i,byte;
     
     //I2C_DATA_INPUT;
     iic_data_high();
-    i = 8;byte = 0;
+     i = 8;byte = 0;
     do
     {
         iic_clk_high(); /*SCL=1,SDA保持稳定，SCL=0,SDA改变 */
@@ -185,12 +186,12 @@ u8 iic_rev_8bits(E_I2cAck ack)
     {
         if(iic_send_8bits(regAddr))
         {
-            flag = TRUE;
+            flag = true;
             for (int i = 0; i < nBytes; i++)
             {
                 if(!iic_send_8bits(pBuf[i]))       //发送数据
                 {
-                    flag = FALSE;
+                    flag = false;
                     break;
                 }  
             }
@@ -216,7 +217,7 @@ u8 iic_rev_8bits(E_I2cAck ack)
 */
  bool ii2_read(uint8_t regAddr,uint8_t *pBuf,uint8_t nBytes)
 {
-    bool flag = FALSE;
+    bool flag = false;
 
     iic_start();     //开始位
     if (iic_send_8bits(i2cAddr))      //发送地址
@@ -231,7 +232,7 @@ u8 iic_rev_8bits(E_I2cAck ack)
                     *pBuf++ = iic_rev_8bits(IIC_ACK);
                 }
                 *pBuf = iic_rev_8bits(IIC_NACK);
-                flag = TRUE;
+                flag = true;
             }
         }
     }
