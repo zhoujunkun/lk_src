@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F415RCT7,LIBRARY_VERSION,USE_FULL_ASSERT,AT_START_F415_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue;..\..\..\..\driver\drv433m;..\..\..\..\..\lk_src</IncludePath>
+              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue;..\..\..\..\driver\drv433m;..\..\..\..\..\lk_src;..\..\..\..\app\board\k51</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,6 +390,11 @@
               <FileName>at32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\at32f4xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>lk_board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\app\board\k51\lk_board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -445,6 +450,11 @@
               <FileName>at32f4xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\AT32F4xx_StdPeriph_Driver\src\at32f4xx_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>at32f4xx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\AT32F4xx_StdPeriph_Driver\src\at32f4xx_exti.c</FilePath>
             </File>
           </Files>
         </Group>

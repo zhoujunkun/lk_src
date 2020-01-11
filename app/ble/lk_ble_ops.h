@@ -24,18 +24,18 @@ typedef enum{masterMcu=0x01,masterWeixing=0x02,masterRemote=0x03}masterId_enum_t
 //舒缓模式,智能模式,活力模式,强劲模式
 typedef enum{smartMode=0x01,easeMode=0x02,vitalityMode=0x03,powerfulMode=0x04}massageMode_enum_t;//
 
-
+typedef enum{bleHeart=0,bleQuitWeiXing,bleMassgeMode,bleHeatGear,bleRunTime,bleMassageGear,bleMassageOver,bleFuncMax}bleEventEnum_t;
 
 
 //操作设备实时时间
 typedef struct
 {
-  uint8_t year; //年
-  uint8_t month; //月
-  uint8_t day;  //天
-  uint8_t hour; // 小时
-  uint8_t minute; //分钟
-  uint8_t second; //秒钟
+	uint8_t year; 	//年
+	uint8_t month;  //月
+	uint8_t day;    //天
+	uint8_t hour;   // 小时
+	uint8_t minute; //分钟
+	uint8_t second; //秒钟
 }bleRealTime_t;
 
 
@@ -43,60 +43,60 @@ typedef struct
 #pragma pack (1) /*指定按1字节对齐*/
 typedef struct
 {
-	uint8_t runStatu; //0:待机; 1：运行;  2: 充电中;  3：充满
-	uint16_t runSeconds; //已运行秒数 
-    uint8_t cfgMinute; //定时分钟数
-    uint8_t currentMode; //当前模式
-    uint8_t currentGears; //当前档位
-    uint8_t currentHeatStatu;//当前加热状态
-    uint8_t currentVoiceStatu; //当前语音状态
-    uint8_t electric;  //电量
-    uint8_t adornStatu; //配搭状态
-    uint8_t noUse1;    //未使用
-	uint8_t noUse2;    //未使用
-    uint16_t product;    //产品型号
+	uint8_t runStatu;                    //0:待机; 1：运行;  2: 充电中;  3：充满
+	uint16_t runSeconds;                 //已运行秒数 
+    uint8_t cfgMinute;                   //定时分钟数
+    uint8_t currentMode;                 //当前模式
+    uint8_t currentGears;                //当前档位
+    uint8_t currentHeatStatu;            //当前加热状态
+    uint8_t currentVoiceStatu;           //当前语音状态
+    uint8_t electric;                    //电量
+    uint8_t adornStatu;                  //配搭状态
+    uint8_t noUse1;                      //未使用
+	uint8_t noUse2;                      //未使用
+    uint16_t product;                    //产品型号
 }bleDeviceStatu_t;
-#pragma pack () /*取消指定对齐，恢复缺省对齐*/
+#pragma pack ()                          /*取消指定对齐，恢复缺省对齐*/
 
 
 typedef struct
 {
-  uint16_t head;
-  uint8_t size;  //字节大小
-  uint8_t func; //功能码
-  bleDeviceStatu_t statu;
-  uint8_t checkSum;
+	uint16_t head;
+	uint8_t size;     //字节大小
+	uint8_t func;     //功能码
+	bleDeviceStatu_t statu;
+	uint8_t checkSum;
 }bleHeartFrame_t;
 
 
 typedef union
 {
 
-  uint8_t sendBuf[19] ;  //占用空间
-  bleHeartFrame_t frame;
+	uint8_t sendBuf[19] ;  //占用空间
+	bleHeartFrame_t frame;
 
 }bleHeartFrameUnion_t;
 typedef void (*bleSend)(uint8_t *data,uint8_t size);
 
 typedef struct 
 {
-  uint8_t   gears;  // 按摩挡位 0~255 ;代表挡位0~255
-  massageMode_enum_t   mode;   //按摩模式： 0x01 模式1；0x02 模式2；。。。
-  bool      ifOver; //按摩是否结束 
-  uint8_t   runtime; //按摩时间  分钟数
+	uint8_t   gears;             // 按摩挡位 0~255 ;代表挡位0~255
+	massageMode_enum_t   mode;   //按摩模式： 0x01 模式1；0x02 模式2；。。。
+	bool      ifOver;            //按摩是否结束 
+	uint8_t   runtime;           //按摩时间  分钟数
 }ble_massage_t;
 
 
 struct frame_handle_s
 {
-  ble_handle_t *ble;
-  ble_massage_t bleMassage; //按摩
-  heatGears_enum_t   heatGears ; //加热挡位 关闭：0x00;低挡：0x10;中档：0x20;高档：0x30
-  masterId_enum_t   masterId;      //操作发起端 mcu ,weixing,遥控器
-  bleRealTime_t    realTime;    //实时时间
-  bool ifQuitWeixing; // 退出小程序,true:退出
-  bool ifShutDown;   //关机指令
-  bleDeviceStatu_t devUpStatu; //设备上传状态
+	ble_handle_t *ble;
+	ble_massage_t massage;         //按摩
+	heatGears_enum_t   heatGears ; //加热挡位 关闭：0x00;低挡：0x10;中档：0x20;高档：0x30
+	masterId_enum_t   masterId;    //操作发起端 mcu ,weixing,遥控器
+	bleRealTime_t    realTime;     //实时时间
+	bool ifQuitWeixing;            // 退出小程序,true:退出
+	bool ifShutDown;               //关机指令
+	bleDeviceStatu_t devUpStatu;   //设备上传状态
 };
    
 typedef struct frame_handle_s frame_handle_t;
@@ -125,7 +125,7 @@ void ble_deviceOpenPower_ack(void);
 //设置按摩时间应答
 void ble_massageRuntime_ack(void);
 
-
+void ble_myEvent_register(bleEventEnum_t myEvent,_myDelegate cb);  //注册事件回调函数
 
 extern frame_handle_t frameHandle;
 

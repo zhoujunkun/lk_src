@@ -36,11 +36,11 @@ int my433M_anasys(uint16_t value)
     case remoteIdle:
     { 
 
-				if(abs(value-REMOTE433_HEAD) <= HEAD_ALLOW_OFFSET)
-				{
-						remoteStatu = remoteData;
-				}
-				else  remoteStatu = remoteIdle;	
+        if(abs(value-REMOTE433_HEAD) <= HEAD_ALLOW_OFFSET)
+        {
+           remoteStatu = remoteData;
+        }
+        else  remoteStatu = remoteIdle;	
 
     }break;
     case remoteData:
@@ -75,8 +75,8 @@ int my433M_anasys(uint16_t value)
       if(abs(value-REMOTE433_HEAD) <= HEAD_ALLOW_OFFSET)
       {
         if(oldRevData != revData)
-				{
-					oldRevData = revData;
+            {
+                oldRevData = revData;
            if((revData>0x69C0)&&(revData<=0x69DF))  
             {
               pressKey = pressMenu;
@@ -102,8 +102,8 @@ int my433M_anasys(uint16_t value)
              pressKey = pressDown;
              if(remoteFunc[pressDown] != NULL) remoteFunc[pressDown](revData);
            }  
-				 }					 
-			}
+             }
+        }
    }break;
   }
 
@@ -136,9 +136,9 @@ int my433M_anasys(uint16_t value)
  */
 void lk_remote_init(remoteCb up,remoteCb down,remoteCb left,remoteCb right,remoteCb menu)
 {
-  remoteFunc[pressUp] = up;
-  remoteFunc[pressLeft] = left;
-  remoteFunc[pressRight] = right;
-  remoteFunc[pressDown] = down; 
-  remoteFunc[pressMenu] = menu;        
+    remoteFunc[pressUp] = up;
+    remoteFunc[pressLeft] = left;
+    remoteFunc[pressRight] = right;
+    remoteFunc[pressDown] = down; 
+    remoteFunc[pressMenu] = menu;
 }

@@ -27,10 +27,10 @@
  */
  QStatus QueueInit(SqQueue* Q)
  {
-	  Q->front = 0;
-   	Q->rear = 0;
-	 return Q_OK;
- }
+    Q->front = 0;
+    Q->rear = 0;
+    return Q_OK;
+}
 
   /**************************************************************************************************
  * @fn     int QueueLength(SqQueue *Q)
@@ -47,7 +47,7 @@
  */
  int QueueLength(SqQueue *Q)
  {
-	 return (Q->rear - Q->front + MAXSIZE)%MAXSIZE;
+    return (Q->rear - Q->front + MAXSIZE)%MAXSIZE;
  }
 
 
@@ -59,10 +59,10 @@
   */
  QStatus Queue_push(SqQueue*Q,QElemType e)
  {
-	 if((Q->rear + 1)%MAXSIZE == Q->front)   /*队列 满 */
-	 return Q_ERROR;
-	 Q->data[Q->rear] = e;   //将元素e赋值给队尾
-	 Q->rear =  (Q->rear +1 )%MAXSIZE;  /*real 指针向后移动，若到最后则转到数组头部*/
+     if((Q->rear + 1)%MAXSIZE == Q->front)             /*队列 满 */
+     return Q_ERROR;
+     Q->data[Q->rear] = e;                             //将元素e赋值给队尾
+     Q->rear =  (Q->rear +1 )%MAXSIZE;                 /*real 指针向后移动，若到最后则转到数组头部*/
      return Q_OK;
  }
   /**
@@ -73,18 +73,18 @@
 QStatus Queue_pop(SqQueue*Q,QElemType* e)
 {
     if(Q->front == Q->rear)   /*队列空判断 */
-	return Q_ERROR;
-	*e = Q->data[Q->front];   //将队头元素付给e
-	Q->front = (Q->front + 1)%MAXSIZE;
+    return Q_ERROR;
+    *e = Q->data[Q->front];   //将队头元素付给e
+    Q->front = (Q->front + 1)%MAXSIZE;
     return Q_OK;
  }
  
 ringQueue_ops_t ringQueue_ops=
 {
-  .init = QueueInit,
-  .getLength = QueueLength,
-  .push = Queue_push,
-  .pop = Queue_pop,
+    .init = QueueInit,
+    .getLength = QueueLength,
+    .push = Queue_push,
+    .pop = Queue_pop,
 };
 
 
