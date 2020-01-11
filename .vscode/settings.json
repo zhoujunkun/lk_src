@@ -3,6 +3,7 @@
         "ringqueue.h": "c",
         "lk_button.h": "c",
         "lk_tm8211_ops.h": "c",
-        "lk_wave.h": "c"
+        "lk_wave.h": "c",
+        "lk_433m.h": "c"
     }
 }

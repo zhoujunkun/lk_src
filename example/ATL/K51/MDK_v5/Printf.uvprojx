@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F415RCT7,LIBRARY_VERSION,USE_FULL_ASSERT,AT_START_F415_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue</IncludePath>
+              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue;..\..\..\..\driver\drv433m;..\..\..\..\..\lk_src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -441,6 +441,11 @@
               <FileType>1</FileType>
               <FilePath>..\Libraries\AT32F4xx_StdPeriph_Driver\src\misc.c</FilePath>
             </File>
+            <File>
+              <FileName>at32f4xx_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\AT32F4xx_StdPeriph_Driver\src\at32f4xx_tim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -470,6 +475,16 @@
               <FileName>ringQueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\app\queue\ringQueue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lk/drv/433M</GroupName>
+          <Files>
+            <File>
+              <FileName>lk_433m.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\driver\drv433m\lk_433m.c</FilePath>
             </File>
           </Files>
         </Group>
