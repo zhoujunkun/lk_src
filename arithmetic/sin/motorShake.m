@@ -4,21 +4,25 @@
 %min(exp(sin(x)))=0.3679
 clear;
 % x = -pi:0.01:pi;
-pwmPluse=255;   %64ÂúÂö¿í
-x = linspace(-pi,pi,64);
-y=pwmPluse/2*sin(x)+pwmPluse/2; %ÕýÏÒ²¨
+pwmPluse=500;   %64ÂúÂö¿í
+size = 64;
+% x = linspace(0,pi,256);
+% y=pwmPluse*sin(x); %ÕýÏÒ²¨
+x=linspace(-1.7183,4.5,size);
+y=(exp(sin(x)) - 0.36787944)*(pwmPluse/(exp(1)-1/exp(1)));
+
 r=round(y);
 
-x1 = linspace(0,2*pi,64);  %¾â³Ý²¨
+x1 = linspace(0,2*pi,size);  %¾â³Ý²¨
 y1=pwmPluse/2*(sawtooth(x1)+1);
 y1=round(y1);
 
 
-x1_1 = linspace(0,2*pi,64);  %¾â³Ý²¨·´Ïò
+x1_1 = linspace(0,2*pi,size);  %¾â³Ý²¨·´Ïò
 y1_1=pwmPluse/2*(sawtooth(-x1_1)+1);
 y1_1=round(y1_1);
 
-x2 = linspace(0,2*pi,64);  %Èý½Ç²¨
+x2 = linspace(0,2*pi,size);  %Èý½Ç²¨
 y2 = pwmPluse/2*(sawtooth(x2,0.5)+1);
 y2=round(y2);
 
@@ -47,33 +51,28 @@ y5 = sin(x5);
 
 
 
-fp = fopen('D:\Personal\Desktop\lk_src\arithmetic\sin\pwmDac.txt','wt');
-fprintf(fp, 'uint8_t pwmArray[]={ //ÕýÏÒ²¨ \n' );
+fp = fopen('D:\Personal\Desktop\lk_src\arithmetic\sin\pwmMotor.txt','wt');
+fprintf(fp, '#define MOTOR_ARRY_SIZE %d', size);
+fprintf(fp, '\n');
+fprintf(fp, 'uint16_t sinMotor[]={ //ÕýÏÒ²¨ \n' );
 fprintf(fp, '%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\n', r);
 fprintf(fp, '};\n');
-fprintf(fp, '};\n');
 
-fprintf(fp, 'uint8_t sawtooth[]={ // \n' );
+
+fprintf(fp, 'uint16_t sawtooth_motor[]={ // \n' );
 fprintf(fp, '%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\n', y1);
 fprintf(fp, '};\n');
-fprintf(fp, '};\n');
 
-fprintf(fp, 'uint8_t triangle[]={ //Èý½Ç \n' );
+
+fprintf(fp, 'uint16_t triangle_motor[]={ //Èý½Ç \n' );
 fprintf(fp, '%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\n', y2);
 fprintf(fp, '};\n');
-fprintf(fp, '};\n');
 
-fprintf(fp, 'uint8_t ladder[]={ //½×ÌÝ \n' );
+
+fprintf(fp, 'uint16_t ladder_motor[]={ //½×ÌÝ \n' );
 fprintf(fp, '%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\n', y3);
 fprintf(fp, '};\n');
 
-fprintf(fp, '};\n');
-fprintf(fp, 'uint8_t square[]={ //Âö¿í \n' );
-fprintf(fp, '%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\n', y4);
-fprintf(fp, '};\n');
-
-fclose(fp);
-%plot(x,y);
 subplot(2,4,1);plot(x,y);
 subplot(2,4,2);plot(x1,y1);
 subplot(2,4,3);plot(x1_1,y1_1);

@@ -30,7 +30,8 @@ void ble_heart(rxFrame_t *frame)
     frameHandle.realTime.minute = frame->buf[4];
     frameHandle.realTime.second = frame->buf[5];
     frameHandle.ble->ifBleConnected = true;
-    frameHandle.ble->ifBleDisConnected = false; 
+    frameHandle.ble->ifBleDisConnected = false;
+    frameHandle.ifQuitWeixing =false;    
     if(myEvent[bleHeart] !=NULL)  myEvent[bleHeart](frame);
 }
    uint8_t heatGears=0,master;

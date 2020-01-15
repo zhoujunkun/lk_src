@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F415RCT7,LIBRARY_VERSION,USE_FULL_ASSERT,AT_START_F415_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue;..\..\..\..\driver\drv433m;..\..\..\..\..\lk_src;..\..\..\..\app\board\k51</IncludePath>
+              <IncludePath>..\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\CM4\CoreSupport;..\Libraries\CMSIS\CM4\DeviceSupport;..\..\Printf;..\AT32_Board;..\..\..\..\app\ble;..\..\..\..\app;..\..\..\..\app\queue;..\..\..\..\driver\drv433m;..\..\..\..\..\lk_src;..\..\..\..\app\board\k51;..\..\..\..\app\task</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -495,6 +495,16 @@
               <FileName>lk_433m.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\driver\drv433m\lk_433m.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lk/app/task</GroupName>
+          <Files>
+            <File>
+              <FileName>lk_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\app\task\lk_task.c</FilePath>
             </File>
           </Files>
         </Group>

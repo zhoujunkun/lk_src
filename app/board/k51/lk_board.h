@@ -1,7 +1,7 @@
 #ifndef __LK_BOARD_H
 #define __LK_BOARD_H
 #include "lk_config.h"
-
+#include "at32f4xx.h"
 /*USART*/
 #define LK_USART          USART3
 #define LK_BAUD_RATE         115200
@@ -29,5 +29,13 @@
 #define LK_TIMER_CNT     TMR2
 #define LK_TIMER_CNT_RCC RCC_APB1PERIPH_TMR2
 #define LK_TIMER_CNT_FREQ 1000000   //1MHZ
+
+/*power key*/
+#define ENABLE_POWER_KEY  1
+#define POWER_KEY_PIN    GPIO_Pins_5
+#define POWER_KEY_GPIO   GPIOB
+
 void lk_borad_init(void);
+/*motor*2*/
+#define ENABLE_MOTOR  1
 #endif

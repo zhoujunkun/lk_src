@@ -1,11 +1,11 @@
 #include "lk_board.h"
-#include "at32f4xx.h"
+
+
 
 
 EXTI_InitType   EXTI_InitStructure;
 GPIO_InitType   GPIO_InitStructure;
-NVIC_InitType NVIC_InitStructure;
-TMR_TimerBaseInitType  TMR_TMReBaseStructure;
+
 /**
   * @brief  Configures the nested vectored interrupt controller.
   * @param  None
@@ -13,6 +13,7 @@ TMR_TimerBaseInitType  TMR_TMReBaseStructure;
   */
 void lk_nvic_config(void)
 {
+    NVIC_InitType NVIC_InitStructure;
     /* Configure the NVIC Preemption Priority Bits */  
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 
@@ -23,6 +24,62 @@ void lk_nvic_config(void)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
+
+/**************************************************************************************************
+ * @fn  void lk_gpio_init(void)
+ *
+ * @brief   GPIO初始化
+ * input parameters
+ *
+ * @None
+ * output parameters
+ *
+ * None.
+ *
+ * @return None.
+ */
+void lk_gpio_init(void)
+{
+      GPIO_InitType GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);  
+
+    /* GPIOA Configuration:push-pull */
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_6 |GPIO_Pins_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  #if ENABLE_POWER_CTL
+    /* GPIO Configuration:push-pull */
+    GPIO_InitStructure.GPIO_Pins = POWER_KEY_PIN ;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(POWER_KEY_GPIO, &GPIO_InitStructure);
+   #endif
+    /* GPIO Configuration:push-pull */
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 ;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_PD;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);    
+    
+    /* Configure USART Rx as input floating */
+    GPIO_InitStructure.GPIO_Pins = LK_UART_RX_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(LK_UART_GPIO, &GPIO_InitStructure);
+    /* Configure USART Tx as alternate function push-pull */
+    GPIO_InitStructure.GPIO_Pins = LK_UART_TX_PIN;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;// GPIO_Mode_AF_PP;
+    GPIO_Init(LK_UART_GPIO, &GPIO_InitStructure);
+    
+    
+    
+}
+
+
 /**************************************************************************************************
  * @fn  void lk_uart_init(void)
  *
@@ -38,23 +95,11 @@ void lk_nvic_config(void)
  */
 void lk_uart_init(void)
 {
- 
-    /* Enable USART Clock */
-    RCC_APB1PeriphClockCmd(LK_UART_RCC, ENABLE);
-    RCC_APB2PeriphClockCmd( RCC_APB2PERIPH_GPIOB| RCC_APB2PERIPH_AFIO, ENABLE);
-
+   // RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_USART3 , ENABLE);
     //GPIO
     GPIO_InitType GPIO_InitStructure;
     USART_InitType USART_InitStructure;
-      /* Configure USART Rx as input floating */
-    GPIO_InitStructure.GPIO_Pins = LK_UART_RX_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-      /* Configure USART Tx as alternate function push-pull */
-    GPIO_InitStructure.GPIO_Pins = LK_UART_TX_PIN;
-    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(LK_UART_GPIO, &GPIO_InitStructure);
+
 
     //usart
     USART_StructInit(&USART_InitStructure);
@@ -136,9 +181,7 @@ void LK_UART_Handle(void)
  */
 void lk_timerCnt_init(void)
 {
-    /* TMR clock enable */
-  RCC_APB1PeriphClockCmd(LK_TIMER_CNT_RCC, ENABLE);
-
+  TMR_TimerBaseInitType  TMR_TMReBaseStructure;
   TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
   TMR_TMReBaseStructure.TMR_Period = 0xffff;
   TMR_TMReBaseStructure.TMR_DIV = (uint16_t) (SystemCoreClock / LK_TIMER_CNT_FREQ) - 1;;
@@ -174,6 +217,7 @@ uint32_t bufArray[20] = {0},nums=0;
  */
 void LK_EXTI_433M_IRQ_Handle(void)
 {
+
     if(EXTI_GetIntStatus(LK_EXTI_433M_PIN) != RESET)
     {
          if(captureNumber == 0)
@@ -226,6 +270,7 @@ void LK_EXTI_433M_IRQ_Handle(void)
  */
 void lk_433m_hardInit(void)
 {
+     NVIC_InitType NVIC_InitStructure;   
     GPIO_InitType GPIO_InitStructure;
     RCC_APB2PeriphClockCmd(LK_EXTI_433M_RCC, ENABLE);        ///<Enable  clock
     GPIO_InitStructure.GPIO_Pins = LK_EXTI_433M_PIN;
@@ -254,6 +299,29 @@ void lk_exti_init(void)
      lk_433m_hardInit();
     #endif
 }
+
+//void lk_pwm_init(void)
+//{
+//  
+//}
+
+
+void  ble_example_test(void)
+{
+    frameHandle.devUpStatu.adornStatu = 0x01; //主机佩戴
+    frameHandle.devUpStatu.currentGears = 4; //当前档位
+    frameHandle.devUpStatu.currentHeatStatu = heatMiddleGear;
+    frameHandle.devUpStatu.currentMode = 1;
+    frameHandle.devUpStatu.currentVoiceStatu = 0;
+    frameHandle.devUpStatu.electric = 50; //电量%
+    frameHandle.devUpStatu.product= 4099;  //产品型号
+    frameHandle.devUpStatu.runSeconds = 500; //秒
+    frameHandle.devUpStatu.cfgMinute = 9; //定时分钟数
+    frameHandle.devUpStatu.runStatu = 0x01;
+    ble_heart_ack(&frameHandle.devUpStatu);
+}
+
+
 /**************************************************************************************************
  * @   lk_borad_init(void)
  *
@@ -270,11 +338,13 @@ void lk_exti_init(void)
 void lk_borad_init(void)
 {
     lk_nvic_config();
-    lk_uart_init();
+    lk_gpio_init();
     lk_exti_init();
     lk_timerCnt_init();
     #if  BLE_ENABLE
+    lk_uart_init();
     ble_init(usart_send); //蓝牙初始化
+    ble_example_test();
     #endif
 
 }

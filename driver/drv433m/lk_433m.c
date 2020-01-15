@@ -18,7 +18,7 @@
 #define REMOTE433_LOW    1000 //低电平时间us
 
 
-#define HEAD_ALLOW_OFFSET   900 //帧头偏差
+#define HEAD_ALLOW_OFFSET   400 //帧头偏差
 #define DATA_ALLOW_OFFSET   200 //数据偏差
 
 uint16_t revData=0,revSize=0,oldRevData=0;    //接收到的数据

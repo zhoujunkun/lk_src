@@ -18,7 +18,7 @@
   * <h2><center>&copy; COPYRIGHT 2018 ArteryTek</center></h2>
   ******************************************************************************
   */ 
-
+#if 1
 /* Includes ------------------------------------------------------------------*/
 #include "at32f4xx.h"
 #include "at32_board.h"
@@ -26,7 +26,25 @@
 
 //lk include
 #include "lk_board.h"
+#include  "lk_task.h"
 #define CAPTURE_TIM_EABLE  0
+
+
+
+
+
+//irq
+#if LK_DEBUG
+#define led_on()  GPIO_WriteBit(GPIOA,GPIO_Pins_1, Bit_RESET)
+#define led_off() GPIO_WriteBit(GPIOA,GPIO_Pins_1, Bit_SET) 
+#endif
+
+
+void TMR1_BRK_TMR9_IRQHandler(void)                                  
+{
+     task_1ms_callBack();
+}
+
 
 
 #if CAPTURE_TIM_EABLE
@@ -86,136 +104,20 @@ void TMR3_GLOBAL_IRQHandler(void)
 
 
 
-#define LKTMR TMR3    
-#define PWM_PLUSE 300
-void pwm_pluse(uint32_t pluse)
-{
-  LKTMR->CC1 = pluse;
-}
-void pwm_start(void)
-{
-   LKTMR->CC1 = PWM_PLUSE;
-}
-
-
-void pwm_close(void)
-{
-   LKTMR->CC1 = 0;
-}
-
-#define SHAKE_ONCE_TIME 200
-#define SHAKE_TWICE_TIME 200
-
-#define SHAKE_LOW_PWM    200
-#define SHAKE_MID_PWM    400
-#define SHAKE_HIGH_PWM   600
-#define SHAKE_CLOSE_PWM   0
-void motor_shake_once()
-{
-    Delay_ms(SHAKE_ONCE_TIME);
-    pwm_start();
-    Delay_ms(SHAKE_ONCE_TIME);
-    pwm_close();
-}
-
-void motor_shake_twice()
-{
-    Delay_ms(SHAKE_TWICE_TIME);
-    pwm_start();
-    Delay_ms(SHAKE_TWICE_TIME);
-    pwm_close();
-    Delay_ms(SHAKE_TWICE_TIME);	
-    pwm_start();
-    Delay_ms(SHAKE_TWICE_TIME);
-    pwm_close();
-}
-bool upFlag=false,downFlag=false,rightFlag=false;
-void remote433_up_callBack(uint16_t remoteData)
-{
-  upFlag = true;
-
-}
-
-void remote433_down_callBack(uint16_t remoteData)
-{
-  downFlag=true;
-
-}
-
-void remote433_right_callBack(uint16_t remoteData)
-{
-  rightFlag=true;
-
-}
-void motor_long_shake(void)
-{
-  static uint8_t motorGears=0;
-  static  uint16_t pwmPluse=0;
-   motorGears++; 
-  switch(motorGears)
-  {
-      case 1:
-      {
-          pwm_pluse(SHAKE_LOW_PWM);
-      }break;
-      case 2:
-      {
-           pwm_pluse(SHAKE_MID_PWM);
-      }break;
-      case 3:
-      {
-           pwm_pluse(SHAKE_HIGH_PWM);
-      }break;
-      default :
-      {
-           pwm_pluse(SHAKE_CLOSE_PWM);
-          motorGears =0;
-      }break;
-  }
-
-}
-
-void lk_pwm_init(void)
-{
-    //GPIO
-    GPIO_InitType GPIO_InitStructure;
-    TMR_TimerBaseInitType  TMR_TMReBaseStructure;
-    TMR_OCInitType  TMR_OCInitStructure;
-    /* GPIOA Configuration:push-pull */
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_6 ;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);	
+  
 
 
 
 
-      /* TMR2 clock enable */
-    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
-    /* Compute the prescaler value */
-    /* TMRe base configuration */
-    TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
-    TMR_TMReBaseStructure.TMR_Period = 1000;
-    TMR_TMReBaseStructure.TMR_DIV = (uint16_t) (SystemCoreClock / 1000000) - 1;
 
-    TMR_TMReBaseStructure.TMR_ClockDivision = 0;
-    TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
 
-    TMR_TimeBaseInit(LKTMR, &TMR_TMReBaseStructure);	
 
-      /* PWM1 Mode configuration: Channel1 */
-    TMR_OCStructInit(&TMR_OCInitStructure);
-    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
-    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
-    TMR_OCInitStructure.TMR_Pulse = 0;
-    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
 
-    TMR_OC1Init(LKTMR, &TMR_OCInitStructure);
 
-    TMR_OC1PreloadConfig(LKTMR, TMR_OCPreload_Enable);
-    /* TMR enable counter */
-    TMR_Cmd(LKTMR, ENABLE);
-}
+
+
+
+
 
 
 #if CAPTURE_TIM_EABLE
@@ -264,28 +166,6 @@ void lk_cap_init(void)
 
 
 #endif
-/**
-  * @brief  Configures the nested vectored interrupt controller.
-  * @param  None
-  * @retval None
-  */
-void NVIC_Configuration(void)
-{
-  NVIC_InitType NVIC_InitStructure;
-
-  /* Configure the NVIC Preemption Priority Bits */  
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
-  	
-  /* Enable the TMR3 global Interrupt */
-  NVIC_InitStructure.NVIC_IRQChannel = TMR3_GLOBAL_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-	
-}
-
 
 
 
@@ -295,12 +175,20 @@ void NVIC_Configuration(void)
   * @retval None
   */
 void RCC_Configuration(void)
-{   
-  /* TMR3 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);	
+{  
+#if 0    
+  /*clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3 | RCC_APB1PERIPH_USART3 |RCC_APB1PERIPH_TMR2, ENABLE);	
   /* Enable GPIO clock */
   RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB|RCC_APB2PERIPH_GPIOC | RCC_APB2PERIPH_AFIO, ENABLE);
+#endif
 
+   /* TMR3 clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3 | RCC_APB1PERIPH_TMR2 | RCC_APB1PERIPH_USART3 , ENABLE);    //| RCC_APB1PERIPH_USART3
+
+  /* GPIOA and GPIOB clock enable */
+  RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB |
+                         RCC_APB2PERIPH_GPIOC | RCC_APB2PERIPH_AFIO, ENABLE);
 }
 
 int erroType=0;
@@ -311,9 +199,9 @@ int erroType=0;
   */
 int main(void)
 {  
-	RCC_Configuration();
-	NVIC_Configuration();
-	Delay_init();
+    RCC_Configuration();
+ //   NVIC_Configuration();
+    Delay_init();
   /* USART1 configured as follow:
         - BaudRate = 115200 baud  
         - Word Length = 8 Bits
@@ -323,30 +211,15 @@ int main(void)
         - Receive and transmit enabled
   */
 
-  UART_Print_Init(115200);
+   // UART_Print_Init(115200);
+    lk_task_init();
+      
+  
 
-	lk_borad_init();
-  lk_pwm_init();
-	lk_remote_init(remote433_up_callBack,remote433_down_callBack,NULL,remote433_right_callBack,NULL);
-  while (1)
+    while (1)
   {
-    //	Delay_ms(1000);
-    erroType = frameHandle.ble->myAnasysProcess(); //协议解析
-    if(upFlag)
-    {
-        upFlag = false;
-        motor_shake_once();
-    }
-    if(downFlag)
-    {
-        motor_shake_twice();
-        downFlag =false;
-    }
-    if(rightFlag)
-    {
-       motor_long_shake();
-        rightFlag =false;
-    }
+   //Delay_ms(200);
+   erroType = frameHandle.ble->myAnasysProcess(); //协议解析
     //	printf("\n\rcapture=%d, cnt=%d\n\r",Capture,testCnt);
   }
 }
@@ -381,5 +254,185 @@ void assert_failed(uint8_t* file, uint32_t line)
 /**
   * @}
   */ 
+#endif
+
+
+#if 0
+ #include "at32f4xx.h"
+
+/** @addtogroup AT32F415_StdPeriph_Examples
+  * @{
+  */
+
+/** @addtogroup TMR_PWM_Output
+  * @{
+  */
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+TMR_TimerBaseInitType  TMR_TMReBaseStructure;
+TMR_OCInitType  TMR_OCInitStructure;
+uint16_t CCR1_Val = 333;
+uint16_t CCR2_Val = 249;
+uint16_t CCR3_Val = 166;
+uint16_t CCR4_Val = 83;
+uint16_t PrescalerValue = 0;
+
+/* Private function prototypes -----------------------------------------------*/
+void RCC_Configuration(void);
+void GPIO_Configuration(void);
+
+/* Private functions ---------------------------------------------------------*/
+
+/**
+  * @brief  Main program
+  * @param  None
+  * @retval None
+  */
+int main(void)
+{
+  /*!< At this stage the microcontroller clock setting is already configured,
+       this is done through SystemInit() function which is called from startup
+       file (startup_at32f413_xx.s) before to branch to application main.
+       To reconfigure the default setting of SystemInit() function, refer to
+       system_at32f4xx.c file
+     */
+
+  /* System Clocks Configuration */
+  RCC_Configuration();
+
+  /* GPIO Configuration */
+  GPIO_Configuration();
+
+  /* -----------------------------------------------------------------------
+    TMR3 Configuration: generate 4 PWM signals with 4 different duty cycles:
+    The TMR3CLK frequency is set to SystemCoreClock (Hz), to get TMR3 counter
+    clock at 24 MHz the Prescaler is computed as following:
+     - Prescaler = (TMR3CLK / TMR3 counter clock) - 1
+
+    The TMR3 is running at 36 KHz: TMR3 Frequency = TMR3 counter clock/(ARR + 1)
+                                                  = 24 MHz / 666 = 36 KHz
+    TMR3 Channel1 duty cycle = (TMR3_CCR1/ TMR3_ARR)* 100 = 50%
+    TMR3 Channel2 duty cycle = (TMR3_CCR2/ TMR3_ARR)* 100 = 37.5%
+    TMR3 Channel3 duty cycle = (TMR3_CCR3/ TMR3_ARR)* 100 = 25%
+    TMR3 Channel4 duty cycle = (TMR3_CCR4/ TMR3_ARR)* 100 = 12.5%
+  ----------------------------------------------------------------------- */
+  /* Compute the prescaler value */
+  PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
+  /* TMRe base configuration */
+  TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
+  TMR_TMReBaseStructure.TMR_Period = 665;
+  TMR_TMReBaseStructure.TMR_DIV = PrescalerValue;
+	
+  TMR_TMReBaseStructure.TMR_ClockDivision = 0;
+  TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
+
+  TMR_TimeBaseInit(TMR3, &TMR_TMReBaseStructure);
+
+  /* PWM1 Mode configuration: Channel1 */
+  TMR_OCStructInit(&TMR_OCInitStructure);
+  TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+  TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+  TMR_OCInitStructure.TMR_Pulse = CCR1_Val;
+  TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+
+  TMR_OC1Init(TMR3, &TMR_OCInitStructure);
+
+  TMR_OC1PreloadConfig(TMR3, TMR_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel2 */
+  TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+  TMR_OCInitStructure.TMR_Pulse = CCR2_Val;
+
+  TMR_OC2Init(TMR3, &TMR_OCInitStructure);
+
+  TMR_OC2PreloadConfig(TMR3, TMR_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel3 */
+  TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+  TMR_OCInitStructure.TMR_Pulse = CCR3_Val;
+
+  TMR_OC3Init(TMR3, &TMR_OCInitStructure);
+
+  TMR_OC3PreloadConfig(TMR3, TMR_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel4 */
+  TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+  TMR_OCInitStructure.TMR_Pulse = CCR4_Val;
+
+  TMR_OC4Init(TMR3, &TMR_OCInitStructure);
+
+  TMR_OC4PreloadConfig(TMR3, TMR_OCPreload_Enable);
+
+  TMR_ARPreloadConfig(TMR3, ENABLE);
+
+  /* TMR3 enable counter */
+  TMR_Cmd(TMR3, ENABLE);
+
+  while (1)
+  {}
+}
+
+/**
+  * @brief  Configures the different system clocks.
+  * @param  None
+  * @retval None
+  */
+void RCC_Configuration(void)
+{
+  /* TMR3 clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
+
+  /* GPIOA and GPIOB clock enable */
+  RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB |
+                         RCC_APB2PERIPH_GPIOC | RCC_APB2PERIPH_AFIO, ENABLE);
+}
+
+/**
+  * @brief  Configure the TMR3 Ouput Channels.
+  * @param  None
+  * @retval None
+  */
+void GPIO_Configuration(void)
+{
+    GPIO_InitType GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);  
+
+    /* GPIOA Configuration:push-pull */
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_6 |GPIO_Pins_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);    
+}
+
+
+#ifdef  USE_FULL_ASSERT
+
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t* file, uint32_t line)
+{
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+  while (1)
+  {}
+}
+
+#endif
+#endif
 
 /******************* (C) COPYRIGHT 2018 ArteryTek *****END OF FILE****/ 
