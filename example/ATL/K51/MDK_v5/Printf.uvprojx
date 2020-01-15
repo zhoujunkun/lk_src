@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -391,22 +391,10 @@
               <FileType>1</FileType>
               <FilePath>..\at32f4xx_it.c</FilePath>
             </File>
-            <File>
-              <FileName>lk_board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\app\board\k51\lk_board.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>BSP</GroupName>
-          <Files>
-            <File>
-              <FileName>at32_board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AT32_Board\at32_board.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>CMSIS</GroupName>
@@ -505,6 +493,16 @@
               <FileName>lk_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\app\task\lk_task.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lk/board/k51</GroupName>
+          <Files>
+            <File>
+              <FileName>lk_board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\app\board\k51\lk_board.c</FilePath>
             </File>
           </Files>
         </Group>

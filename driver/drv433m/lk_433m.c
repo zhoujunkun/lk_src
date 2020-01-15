@@ -29,7 +29,7 @@ remotePressEnum_t pressKey = remotePressNone;
 typedef enum {remoteIdle=0,remoteData,remoteEnd}remoteStatuEnu_t;
 remoteStatuEnu_t remoteStatu = remoteIdle;
 bool ifComplete=false;
-int my433M_anasys(uint16_t value)
+void my433M_anasys(uint16_t value)
 {
   switch (remoteStatu)
   {
@@ -110,13 +110,6 @@ int my433M_anasys(uint16_t value)
 }
 
 
-
-
-
-
-
-
-
 /**************************************************************************************************
  * @fn  void lk_remote_init(remoteCb *up,remoteCb *down,remoteCb *left,remoteCb *right,remoteCb *menu)
  *
@@ -142,3 +135,4 @@ void lk_remote_init(remoteCb up,remoteCb down,remoteCb left,remoteCb right,remot
     remoteFunc[pressDown] = down; 
     remoteFunc[pressMenu] = menu;
 }
+

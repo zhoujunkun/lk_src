@@ -168,29 +168,6 @@ void lk_cap_init(void)
 #endif
 
 
-
-/**
-  * @brief  Configures the different system clocks.
-  * @param  None
-  * @retval None
-  */
-void RCC_Configuration(void)
-{  
-#if 0    
-  /*clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3 | RCC_APB1PERIPH_USART3 |RCC_APB1PERIPH_TMR2, ENABLE);	
-  /* Enable GPIO clock */
-  RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB|RCC_APB2PERIPH_GPIOC | RCC_APB2PERIPH_AFIO, ENABLE);
-#endif
-
-   /* TMR3 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3 | RCC_APB1PERIPH_TMR2 | RCC_APB1PERIPH_USART3 , ENABLE);    //| RCC_APB1PERIPH_USART3
-
-  /* GPIOA and GPIOB clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB |
-                         RCC_APB2PERIPH_GPIOC | RCC_APB2PERIPH_AFIO, ENABLE);
-}
-
 int erroType=0;
 /**
   * @brief  Main program
@@ -199,23 +176,11 @@ int erroType=0;
   */
 int main(void)
 {  
-    RCC_Configuration();
- //   NVIC_Configuration();
     Delay_init();
-  /* USART1 configured as follow:
-        - BaudRate = 115200 baud  
-        - Word Length = 8 Bits
-        - One Stop Bit
-        - No parity
-        - Hardware flow control disabled (RTS and CTS signals)
-        - Receive and transmit enabled
-  */
+   lk_task_init();
 
    // UART_Print_Init(115200);
-    lk_task_init();
-      
-  
-
+     
     while (1)
   {
    //Delay_ms(200);

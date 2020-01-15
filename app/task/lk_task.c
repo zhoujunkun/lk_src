@@ -1,34 +1,40 @@
+
+/**
+  ******************************************************************************
+  * @file           : lk_task.c
+  * @author         : zjk
+  * @version        : v1.1
+  * 
+  * @date           : 
+  *                   
+  * @brief          : 
+  ******************************************************************************
+  */
 #include "lk_task.h"
- #include "at32_board.h"
-/*计数器*/
-#define TASK_1MS_IRQ       TMR1_BRK_TMR9_IRQHandler       //1ms定时器    
-#define TASK_TIMER         TMR9                           //计数器定时器
-#define TASK_TIMER_RCC     RCC_APB2PERIPH_TMR9            //计数器定时器时钟
-#define TASK_TIMER_NVIC    TMR1_BRK_TMR9_IRQn
+#include "at32_board.h"
+ /*delay variable*/
+static __IO float fac_us;
+static __IO float fac_ms;
+/*delay macros*/
+#define STEP_DELAY_MS	500
 
-#define MOTOR_TIM         TMR3
-#define MOTOR_TIM_RCC     RCC_APB1PERIPH_TMR3
-#define MOTOR_PORTA_PIN   GPIO_Pins_6
-#define MOTOR_PORTA_GPIO  GPIOA
-
-#define MOTOR_PORTB_PIN   GPIO_Pins_7
-#define MOTOR_PORTB_GPIO  GPIOA
-
-#define LKTMR_MOTOR TMR3  
 
 #define SHAKE_ONCE_TIME 200
 #define SHAKE_TWICE_TIME 200
 
-#define SHAKE_LOW_PWM()       LKTMR_MOTOR->CC1=800
-#define SHAKE_MID_PWM()       LKTMR_MOTOR->CC1=500
-#define SHAKE_HIGH_PWM()      LKTMR_MOTOR->CC1=200
-#define SHAKE_CLOSE_PWM()     LKTMR_MOTOR->CC1=0
+#define SHAKE_LOW_PWM()       MOTOR_TIM->CC1=800
+#define SHAKE_MID_PWM()       MOTOR_TIM->CC1=500
+#define SHAKE_HIGH_PWM()      MOTOR_TIM->CC1=200
+#define SHAKE_CLOSE_PWM()     MOTOR_TIM->CC1=0
 
-#define SHAKE_PWM_SET(DATA)   LKTMR_MOTOR->CC1=DATA
-
+#define SHAKE_PWM_SET(DATA)   MOTOR_TIM->CC1=DATA
 #define MOTOR_ARRY_SIZE 64
 
- bool ifPowerOn=false,powerKeyPress=false;
+
+#define motor_shakeOnce_trig()  motorShakeOnece.ifStart =true
+#define motor_shakeTwice_trig() motorShakeTwice.ifStart =true    
+
+bool ifPowerOn=false,powerKeyPress=false;
 uint16_t sinMotor[]={ //正弦波 
 1,0,0,1,2,5,8,12,17,23,
 31,40,50,61,75,90,107,126,147,170,
@@ -94,55 +100,18 @@ motorRun_t motorShakeTwice=
 };
 
 
-void lk_pwm_init(void)
-{
-    TMR_TimerBaseInitType  TMR_TMReBaseStructure;
-    TMR_OCInitType  TMR_OCInitStructure;
-    /* TMRe base configuration */
-    TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
-    TMR_TMReBaseStructure.TMR_Period = 1000;
-    TMR_TMReBaseStructure.TMR_DIV = (uint16_t) (SystemCoreClock / 1000000) - 1;
-    TMR_TMReBaseStructure.TMR_ClockDivision = 0;
-    TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
-    TMR_TimeBaseInit(LKTMR_MOTOR, &TMR_TMReBaseStructure);
-
-      /* PWM1 Mode configuration: Channel1 */
-    TMR_OCStructInit(&TMR_OCInitStructure);
-    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
-    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
-    TMR_OCInitStructure.TMR_Pulse = 0;
-    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
-    TMR_OC1Init(LKTMR_MOTOR, &TMR_OCInitStructure);
-    TMR_OC1PreloadConfig(LKTMR_MOTOR, TMR_OCPreload_Enable);
-    
-    
-      /* PWM1 Mode configuration: Channel2 */
-    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
-    TMR_OCInitStructure.TMR_Pulse = 0;
-    TMR_OC2Init(LKTMR_MOTOR, &TMR_OCInitStructure);
-    TMR_OC2PreloadConfig(LKTMR_MOTOR, TMR_OCPreload_Enable);   
-
-   TMR_ARPreloadConfig(TMR3, ENABLE);
-    /* TMR enable counter */
-    TMR_Cmd(LKTMR_MOTOR, ENABLE);
-}
 
 
+
+//任务定时器初始化
 void lk_taskTime_init(void)
 {
     TMR_TimerBaseInitType  TMR_TMReBaseStructure;
-    //RCC
-    RCC_APB2PeriphClockCmd(TASK_TIMER_RCC,ENABLE);    
-   
+ 
     //NVIC
     NVIC_InitType NVIC_InitStructure;
 
-    /* Enable the TMR2 global Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = TASK_TIMER_NVIC;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
+
     
 
 
@@ -163,6 +132,7 @@ void lk_taskTime_init(void)
 }
 
 
+//电机震动控制
 void motor_shake(motorRun_t *motor)
 {
    static uint8_t freq=0;
@@ -220,9 +190,13 @@ void task_1ms_callBack(void)
   if (TMR_GetINTStatus(TASK_TIMER, TMR_INT_Overflow) != RESET)
   {
      TMR_ClearITPendingBit(TASK_TIMER, TMR_INT_Overflow);  
-     timesCnt ++;
-     motor_shake(&motorShakeOnece);
-     motor_shake(&motorShakeTwice);
+  #if ENABLE_MOTOR
+     if(ifPowerOn == true)
+     {
+         motor_shake(&motorShakeOnece);
+         motor_shake(&motorShakeTwice);
+      }
+//    timesCnt ++;      
 //     if(timesCnt == 20)
 //    {
 //        timesCnt = 0;
@@ -239,6 +213,7 @@ void task_1ms_callBack(void)
 //        else   led_off();
 //        #endif
 //    }  
+  #endif
  #if ENABLE_POWER_CTL    
       if(powerKeyPress == true)
       {
@@ -256,20 +231,22 @@ void task_1ms_callBack(void)
 
    
 }
+/**********************************433m remote****************************************/
 
 uint8_t upCnts,downCnts=0,rightCnts=0,leftCnts=0,menuCnts=0;
+/*433上按键回调函数*/
 void remote433_up_callBack(uint16_t remoteData)
 {
   motorShakeOnece.ifStart =true;
   upCnts++;
 }
-
+/*433下按键回调函数*/
 void remote433_down_callBack(uint16_t remoteData)
 {
   motorShakeTwice.ifStart = true;
   downCnts++;
 }
-
+/*433右按键回调函数*/
 void remote433_right_callBack(uint16_t remoteData)
 {
   rightCnts++;
@@ -289,17 +266,18 @@ void remote433_right_callBack(uint16_t remoteData)
   { SHAKE_CLOSE_PWM();  rightCnts=0;   } 
 }
 
-
+/*433上按键回调函数*/
 void remote433_left_callBack(uint16_t remoteData)
 {
   leftCnts++;
 }
-
+/*433功能按键回调函数*/
 void remote433_menu_callBack(uint16_t remoteData)
 {
   menuCnts++;
 }
-
+/**********************************433m remote end****************************************/
+/*电源开关按键*/
 void  powerKey_ctl(void)
 {
     uint8_t bitKey=0;
@@ -319,26 +297,108 @@ void  powerKey_ctl(void)
    };
 
    powerKeyPress=false;
-   ifPowerOn=false; 
    GPIO_WriteBit(GPIOB,GPIO_Pins_5, Bit_SET);   //Power on
 }
 
-
+/*初始化*/
 void lk_task_init(void)
-{
-  /*board init*/
-  lk_borad_init();
-  lk_pwm_init();
-  lk_taskTime_init();
-  lk_remote_init(remote433_up_callBack,remote433_down_callBack,remote433_left_callBack,remote433_right_callBack,remote433_menu_callBack);  
- #if ENABLE_POWER_CTL
-  powerKey_ctl();
- #endif 
+{ 
+  lk_borad_init();           /*board init*/      
+   
+  lk_taskTime_init();   
+
+  #if ENABLE_POWER_CTL
+    powerKey_ctl();
+  #endif     
+    
+  #if ENABLE_REMOTE_433M
+  lk_remote_init(remote433_up_callBack,remote433_down_callBack,remote433_left_callBack,remote433_right_callBack,remote433_menu_callBack);
+  #endif    
+
+
 
 
 }
 
 
+/**
+  * @brief  initialize Delay function   
+  * @param  None
+  * @retval None
+  */		   
+void Delay_init()
+{
+  /*Config Systick*/
+  SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
+  fac_us=(float)SystemCoreClock/(8 * 1000000);
+  fac_ms=fac_us*1000;
+}
 
+/**
+  * @brief  Inserts a delay time.
+  * @param  nus: specifies the delay time length, in microsecond.
+  * @retval None
+  */
+void Delay_us(u32 nus)
+{
+  u32 temp;
+  SysTick->LOAD = (u32)(nus*fac_us);
+  SysTick->VAL = 0x00;
+  SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk ;
+  do
+  {
+    temp = SysTick->CTRL;
+  }while((temp & 0x01) &&! (temp & (1<<16)));
+
+  SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+  SysTick->VAL = 0X00;
+}
+ 
+/**
+  * @brief  Inserts a delay time.
+  * @param  nms: specifies the delay time length, in milliseconds.
+  * @retval None
+  */
+void Delay_ms(u16 nms)
+{
+  u32 temp;
+  while(nms)
+  {
+    if(nms > STEP_DELAY_MS)
+    {
+      SysTick->LOAD = (u32)(STEP_DELAY_MS * fac_ms);
+      nms -= STEP_DELAY_MS;
+    }
+    else
+    {
+      SysTick->LOAD = (u32)(nms * fac_ms);
+      nms = 0;
+    }
+    SysTick->VAL = 0x00;
+    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    do
+    {
+      temp = SysTick->CTRL;
+    }while( (temp & 0x01) && !(temp & (1<<16)) );
+
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    SysTick->VAL = 0X00;
+  }
+}
+
+/**
+  * @brief  Inserts a delay time.
+  * @param  sec: specifies the delay time length, in seconds.
+  * @retval None
+  */
+void Delay_sec(u16 sec)
+{
+  u16 i;
+  for(i=0; i<sec; i++)
+  {
+    Delay_ms(500);
+    Delay_ms(500);
+  }
+}
 
 
