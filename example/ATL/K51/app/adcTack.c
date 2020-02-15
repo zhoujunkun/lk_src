@@ -8,7 +8,7 @@ uint16_t smapleBuf[ADC_SAMPLE_SIZE][ADC_CHANNEL_NUMBERS]={0};
 
 #define ADC_NORMAL_CAL(val)          ((val * 3300) / (4095))
 // Boost反馈电压采样算法
-#define ADC_SAMPLE_FB(val)           ((val * 3300 * 52) / (4095))
+#define ADC_SAMPLE_FB(val)           ((val * 3000 * 52) / (4095))
 
 // BAT电压采样算法
 #define ADC_SAMPLE_BAT(val)          ((val * 6000) / (4095))
@@ -38,11 +38,11 @@ float filterSampleValue(sampleADC_ID_enum_t id)
     {
         case sample_boost_fb:
         {
-            calValue = ADC_NORMAL_CAL(value);
+            calValue = ADC_SAMPLE_FB(value);
         }break;
         case sample_bat:
         {
-            calValue = ADC_NORMAL_CAL(value);
+            calValue = ADC_SAMPLE_BAT(value);
         }break;
         case sample_heat:
         {

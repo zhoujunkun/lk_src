@@ -16,6 +16,6 @@
  */
 #define CMSIS_device_header "AT32F415xx.h"
 
-#define RTE_USING_FINSH
+//#define RTE_USING_FINSH
 
 #endif /* RTE_COMPONENTS_H */

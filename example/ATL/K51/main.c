@@ -168,7 +168,7 @@ void lk_cap_init(void)
 #endif
 
 
-int erroType=0;
+
 /**
   * @brief  Main program
   * @param  None

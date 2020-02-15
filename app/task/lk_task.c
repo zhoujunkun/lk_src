@@ -266,19 +266,19 @@ void  powerKey_ctl(void)
 {
     uint8_t bitKey=0;
 
-   while(ifPowerOn != true)
-   {
-       bitKey = GPIO_ReadInputDataBit(GPIOB,GPIO_Pins_4);
-       if(bitKey == Bit_SET)
-       {
-           Delay_ms(50);
-           if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pins_4) == Bit_SET)
-           {
-              powerKeyPress = true;
-           }
-           
-       }   
-   };
+//   while(ifPowerOn != true)
+//   {
+//       bitKey = GPIO_ReadInputDataBit(GPIOB,GPIO_Pins_4);
+//       if(bitKey == Bit_SET)
+//       {
+//          // Delay_ms(50);
+//           if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pins_4) == Bit_SET)
+//           {
+//              powerKeyPress = true;
+//           }
+//           
+//       }   
+//   };
 
    powerKeyPress=false;
    GPIO_WriteBit(GPIOB,GPIO_Pins_5, Bit_SET);   //Power on
@@ -304,14 +304,16 @@ void lk_task(void)
 
 }
 
-
+int erroType=0;
 int main(void)
 {
   lk_task();
    while(1)
    {
-     rt_thread_mdelay(1000);
-    // rt_kprintf("zjk test...\r\n");
+     rt_thread_mdelay(50);
+    #ifndef RTE_USING_FINSH
+        erroType = frameHandle.ble->myAnasysProcess(); //协议解析
+    #endif
    }
 }
 

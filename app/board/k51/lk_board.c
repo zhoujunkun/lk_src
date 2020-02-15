@@ -82,17 +82,31 @@ void lk_rcc_config(void)
  */
 void lk_gpio_init(void)
 {
-    GPIO_InitType GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_1;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT_PP;
-    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);  
-
     /* GPIOA Configuration:push-pull */
-    GPIO_InitStructure.GPIO_Pins = MOTOR_PORTA_PIN |MOTOR_PORTB_PIN;
+    GPIO_InitStructure.GPIO_Pins = MOTOR_PORT_PIN ;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
     GPIO_Init(MOTOR_GPIO, &GPIO_InitStructure);
+
+    /* GPIOB heat pwm TMR4  */
+    GPIO_InitStructure.GPIO_Pins = HEAT_PWM_PIN ;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(HEAT_PWM_GPIO, &GPIO_InitStructure);
+
+
+    /* GPIOB heat pwm TMR1  */
+    GPIO_InitStructure.GPIO_Pins = EMS_PWM_A | EMS_PWM_B ;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(EMS_PWM_GPIO, &GPIO_InitStructure);
+
+
+    /* GPIOA BOOST pwm TMR2  */
+    GPIO_InitStructure.GPIO_Pins = BOOST_PWM_PIN  ;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+    GPIO_Init(BOOST_PWM_GPIO, &GPIO_InitStructure);
 
   #if ENABLE_POWER_CTL
     /* GPIO Configuration:push-pull */
@@ -143,7 +157,7 @@ void lk_gpio_init(void)
     //check IO statu
     GPIO_StructInit(&GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pins = USB_CHECK_PIN ;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_PD;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(USB_CHECK_GPIO, &GPIO_InitStructure);  
     //bat is full check
     GPIO_StructInit(&GPIO_InitStructure);
@@ -418,7 +432,15 @@ void LK_EXTI_433M_IRQ_Handle(void)
   }
 }
 
+void enable_433m(void)
+{
+    EXTI_InitStructure.EXTI_Line = LK_EXTI_433M_LINE;   \
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt; \
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  \
+    EXTI_InitStructure.EXTI_LineEnable = DISABLE;    \
+    EXTI_Init(&EXTI_InitStructure); 
 
+}
 
 /**************************************************************************************************
  * @fnlk_433m_hardInit(void)
@@ -447,7 +469,8 @@ void lk_433m_hardInit(void)
 	TMR_Cmd(LK_EXTI_TIMER_CNT, ENABLE);  //使能
     
     
-    HARDWARE_433M_DISABLE; //不使能433M外部中断
+    //HARDWARE_433M_DISABLE; //不使能433M外部中断
+    HARDWARE_433M_ENABLE;
 }
 
 
@@ -481,9 +504,117 @@ void lk_motor_init(void)
 
    TMR_ARPreloadConfig(MOTOR_TIM, ENABLE);
     /* TMR enable counter */
-   // TMR_Cmd(MOTOR_TIM, ENABLE);
+  //  TMR_Cmd(MOTOR_TIM, ENABLE);
     TMR_Cmd(MOTOR_TIM, DISABLE);
 }
+
+
+void lk_heatPwm_init(void)
+{
+   TMR_TimerBaseInitType  TMR_TMReBaseStructure;
+    TMR_OCInitType  TMR_OCInitStructure;
+
+    // 使能TMR4时钟
+    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR4, ENABLE);
+
+    // 初始化定时器 频率
+    TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
+    TMR_TMReBaseStructure.TMR_Period = TMR4_PWM_PERIOD_VAL-1;
+    TMR_TMReBaseStructure.TMR_DIV =  (uint16_t) (SystemCoreClock / TMR4_FREQ) - 1;
+    TMR_TMReBaseStructure.TMR_ClockDivision = 0;
+    TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
+    TMR_TimeBaseInit(TMR4, &TMR_TMReBaseStructure);
+
+    // 初始化 ch1
+    TMR_OCStructInit(&TMR_OCInitStructure);
+    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+    TMR_OCInitStructure.TMR_Pulse = 500;
+    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+    TMR_OC1Init(TMR4, &TMR_OCInitStructure);
+    TMR_OC1PreloadConfig(TMR4, TMR_OCPreload_Enable);
+
+    // 使能自动重载
+    TMR_ARPreloadConfig(TMR4, ENABLE);
+    // 使能定时器4
+    TMR_Cmd(TMR4, ENABLE); 
+    TMR_CtrlPWMOutputs(TMR4, DISABLE); 
+}
+
+void lk_boostPwm_init(void)
+{
+   TMR_TimerBaseInitType  TMR_TMReBaseStructure;
+    TMR_OCInitType  TMR_OCInitStructure;
+
+    // 使能TMR2时钟
+    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR2, ENABLE);
+
+    // 初始化定时器 频率
+    TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
+    TMR_TMReBaseStructure.TMR_Period = 100;
+    TMR_TMReBaseStructure.TMR_DIV =  (uint16_t) (SystemCoreClock / 15000000) - 1;
+    TMR_TMReBaseStructure.TMR_ClockDivision = 0;
+    TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
+    TMR_TimeBaseInit(TMR2, &TMR_TMReBaseStructure);
+
+    // 初始化 ch1
+    TMR_OCStructInit(&TMR_OCInitStructure);
+    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+    TMR_OCInitStructure.TMR_Pulse = 0;
+    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+    TMR_OC1Init(TMR2, &TMR_OCInitStructure);
+    TMR_OC1PreloadConfig(TMR2, TMR_OCPreload_Enable);
+
+    // 使能自动重载
+    TMR_ARPreloadConfig(TMR2, ENABLE);
+    // 使能定时器2
+    TMR_Cmd(TMR2, ENABLE); 
+    TMR_CtrlPWMOutputs(TMR2, DISABLE); 
+    
+}
+
+
+void lk_emsPwm_init(void)
+{
+   TMR_TimerBaseInitType  TMR_TMReBaseStructure;
+    TMR_OCInitType  TMR_OCInitStructure;
+
+    // 使能TMR1时钟
+    RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_TMR1, ENABLE);
+
+    // 初始化定时器 频率
+    TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
+    TMR_TMReBaseStructure.TMR_Period = 1000;
+    TMR_TMReBaseStructure.TMR_DIV =  (uint16_t) (SystemCoreClock / EMS_FREQ) - 1;
+    TMR_TMReBaseStructure.TMR_ClockDivision = 0;
+    TMR_TMReBaseStructure.TMR_CounterMode = TMR_CounterDIR_Up;
+    TMR_TimeBaseInit(TMR1, &TMR_TMReBaseStructure);
+
+    // 初始化 ch1     EMS_PWB
+    TMR_OCStructInit(&TMR_OCInitStructure);
+    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+    TMR_OCInitStructure.TMR_Pulse = 30;
+    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+    TMR_OC1Init(TMR1, &TMR_OCInitStructure);
+    TMR_OC1PreloadConfig(TMR1, TMR_OCPreload_Enable);
+    // 初始化 ch2    EMS_PWA
+    TMR_OCStructInit(&TMR_OCInitStructure);
+    TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+    TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+    TMR_OCInitStructure.TMR_Pulse = 0;
+    TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+    TMR_OC2Init(TMR1, &TMR_OCInitStructure);
+    TMR_OC2PreloadConfig(TMR1, TMR_OCPreload_Enable);
+    // 使能自动重载
+    TMR_ARPreloadConfig(TMR1, ENABLE);
+    // 使能定时器1
+    TMR_Cmd(TMR1, ENABLE);
+    TMR_CtrlPWMOutputs(TMR1, DISABLE);    
+}
+
+
 
 
 
@@ -502,6 +633,10 @@ void  ble_example_test(void)
     frameHandle.devUpStatu.runStatu = 0x01;
     ble_heart_ack(&frameHandle.devUpStatu);
 }
+
+
+
+
 
 
 /**************************************************************************************************
@@ -535,9 +670,14 @@ static int lk_borad_init(void)
 #endif
     
 #if  ENABLE_MOTOR
-    lk_motor_init();
+   lk_motor_init();
 #endif
- 
+   lk_heatPwm_init();
+   lk_emsPwm_init();
+   lk_boostPwm_init();
+     
+   LED_YELLOW_ON();
+   LED_BLUE_ON();
     return 0;
 }
 

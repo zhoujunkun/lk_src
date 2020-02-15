@@ -3,7 +3,7 @@
 #include "lk_config.h"
 #include "at32f4xx.h"
 #define ENABLE_MOTOR                  1        //使能电机
-#define ENABLE_POWER_CTL              0        //使能电源开关
+#define ENABLE_POWER_CTL              1        //使能电源开关
 #define ENABLE_BLE                    1        //使能蓝牙
 #define ENABLE_REMOTE_433M            1        //433 遥控器
 
@@ -76,8 +76,7 @@ EXTI_Init(&EXTI_InitStructure);
 /*motor   电机*/    
 #define MOTOR_TIM                      TMR3
 #define MOTOR_TIM_RCC                  RCC_APB1PERIPH_TMR3
-#define MOTOR_PORTA_PIN                GPIO_Pins_6
-#define MOTOR_PORTB_PIN                GPIO_Pins_7
+#define MOTOR_PORT_PIN                 GPIO_Pins_6
 #define MOTOR_GPIO                     GPIOA
 #define MOTOR_RUN_MAX1000(DATA)                MOTOR_TIM->CC1 = DATA
 /*定时器用于任务*/     
@@ -90,12 +89,36 @@ EXTI_Init(&EXTI_InitStructure);
 #define LED_YELLOW_PIN                 GPIO_Pins_9 
 #define LED_BLUE_PIN                   GPIO_Pins_8
 #define LED_GPIO                       GPIOB
-#define LED_YELLOW_ON()                GPIO_WriteBit(LED_GPIO,LED_YELLOW_PIN,Bit_RESET)
-#define LED_YELLOW_OFF()               GPIO_WriteBit(LED_GPIO,LED_YELLOW_PIN,Bit_SET)
+#define LED_YELLOW_ON()                GPIO_WriteBit(LED_GPIO,LED_YELLOW_PIN,Bit_SET)
+#define LED_YELLOW_OFF()               GPIO_WriteBit(LED_GPIO,LED_YELLOW_PIN,Bit_RESET)
 
-#define LED_BLUE_ON()                  GPIO_WriteBit(LED_GPIO,LED_BLUE_PIN,Bit_RESET)
-#define LED_BLUE_OFF()                 GPIO_WriteBit(LED_GPIO,LED_BLUE_PIN,Bit_SET)  
+#define LED_BLUE_ON()                  GPIO_WriteBit(LED_GPIO,LED_BLUE_PIN,Bit_SET)
+#define LED_BLUE_OFF()                 GPIO_WriteBit(LED_GPIO,LED_BLUE_PIN,Bit_RESET)  
 #define LK_BOARD_APB1_RCC              LK_EXTI_TIMER_CNT_RCC|LK_BLE_UART_RCC|MOTOR_TIM_RCC
+
+/*TM4 PWM */
+#define HEAT_PWM_PIN                  GPIO_Pins_6
+#define HEAT_PWM_GPIO                 GPIOB
+#define TMR4_PWM_PERIOD_VAL           1200    //周期- 》 稳定的150KHZ PWM
+#define TMR4_PWM_ENABLE               
+
+//控制最大的PWM占空比 ————> 75%
+#define TMR4_PWM_PERIOD_MAX_VAL       960
+#define TMR4_FREQ                     150000
+
+
+/*EMS PWM*/
+#define EMS_PWM_A                     GPIO_Pins_9
+#define EMS_PWM_B                     GPIO_Pins_8
+#define EMS_PWM_GPIO                  GPIOA
+#define EMS_FREQ                      1000000
+
+/*TMR2 pwm -- TMR2 */
+
+#define BOOST_PWM_PIN                 GPIO_Pins_0
+#define BOOST_PWM_GPIO                GPIOA
+#define BOOST_PWM_ENABLE()            MR_CtrlPWMOutputs(TMR2, ENABLE)
+
 
 
 /*ADC  电压*/
