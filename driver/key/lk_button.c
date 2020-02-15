@@ -42,7 +42,7 @@ uint16_t button_read(void)
 {
     lk_buttonHandle_t *target=NULL;
     uint8_t btnRead=0;
-	  uint16_t read_data=0;
+    uint16_t read_data=0;
     keyData = btnRstData;
    for(target =btnHead,i=0;(target != NULL) && (target->read != NULL);target = target->next, i ++)
    {
@@ -120,6 +120,7 @@ void button_1ms_callBack(void)
   static int cnt=0,keyPressTime=0;
   static uint16_t btnStatu=0,btnBit=0,btnCns;
   cnt++;
+  if(btnNumbs == 0) return;  
   if(cnt >= BUTTON_TASK_TIM)
   {
       cnt =0;

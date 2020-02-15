@@ -1,10 +1,6 @@
 #ifndef __LK_BUTTON_H
 #define __LK_BUTTON_H
 #include "lk_global.h"
-
-#include "main.h"
-
-
 typedef struct lk_buttonHandle
 {
   uint8_t pressLogicLevel;

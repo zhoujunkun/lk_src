@@ -174,20 +174,20 @@ int erroType=0;
   * @param  None
   * @retval None
   */
-int main(void)
-{  
-    Delay_init();
-   lk_task_init();
+//int main(void)
+//{  
+//    Delay_init();
+//    lk_task_init();
 
-   // UART_Print_Init(115200);
-     
-    while (1)
-  {
-   //Delay_ms(200);
-   erroType = frameHandle.ble->myAnasysProcess(); //协议解析
-    //	printf("\n\rcapture=%d, cnt=%d\n\r",Capture,testCnt);
-  }
-}
+//   // UART_Print_Init(115200);
+//     
+//    while (1)
+//  {
+//   //Delay_ms(200);
+//   erroType = frameHandle.ble->myAnasysProcess(); //协议解析
+//    //	printf("\n\rcapture=%d, cnt=%d\n\r",Capture,testCnt);
+//  }
+//}
 
 
 #ifdef  USE_FULL_ASSERT

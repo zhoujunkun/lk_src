@@ -1,0 +1,12 @@
+.\objects\board.o: RTE\RTOS\board.c
+.\objects\board.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rthw.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtthread.h
+.\objects\board.o: .\RTE\RTOS\rtconfig.h
+.\objects\board.o: .\RTE\_Printf\RTE_Components.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtdebug.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtdef.h
+.\objects\board.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtservice.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtm.h
+.\objects\board.o: C:\Keil_v5\ARM\PACK\RealThread\RT-Thread\3.1.3\include\rtthread.h

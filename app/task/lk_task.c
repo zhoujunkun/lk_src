@@ -12,6 +12,9 @@
   */
 #include "lk_task.h"
 #include "at32_board.h"
+
+#include <rtthread.h>
+
  /*delay variable*/
 static __IO float fac_us;
 static __IO float fac_ms;
@@ -107,13 +110,6 @@ motorRun_t motorShakeTwice=
 void lk_taskTime_init(void)
 {
     TMR_TimerBaseInitType  TMR_TMReBaseStructure;
- 
-    //NVIC
-    NVIC_InitType NVIC_InitStructure;
-
-
-    
-
 
     /* TMRe base configuration */
     TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
@@ -190,11 +186,13 @@ void task_1ms_callBack(void)
   if (TMR_GetINTStatus(TASK_TIMER, TMR_INT_Overflow) != RESET)
   {
      TMR_ClearITPendingBit(TASK_TIMER, TMR_INT_Overflow);  
-  #if ENABLE_MOTOR
+     
      if(ifPowerOn == true)
      {
+		#if ENABLE_MOTOR
          motor_shake(&motorShakeOnece);
          motor_shake(&motorShakeTwice);
+		#endif
       }
 //    timesCnt ++;      
 //     if(timesCnt == 20)
@@ -213,7 +211,7 @@ void task_1ms_callBack(void)
 //        else   led_off();
 //        #endif
 //    }  
-  #endif
+
  #if ENABLE_POWER_CTL    
       if(powerKeyPress == true)
       {
@@ -250,20 +248,6 @@ void remote433_down_callBack(uint16_t remoteData)
 void remote433_right_callBack(uint16_t remoteData)
 {
   rightCnts++;
-  if(rightCnts ==1) 
-  {
-      ifShakeLowStart=true;
-  }
-  else if(rightCnts ==2) 
-  {
-      ifShakeMidStart = true;
-  }
-  else if(rightCnts == 3) 
-  {
-      ifShakeHighStart = true;
-  }
-  else if(rightCnts == 4) 
-  { SHAKE_CLOSE_PWM();  rightCnts=0;   } 
 }
 
 /*433上按键回调函数*/
@@ -299,14 +283,16 @@ void  powerKey_ctl(void)
    powerKeyPress=false;
    GPIO_WriteBit(GPIOB,GPIO_Pins_5, Bit_SET);   //Power on
 }
+/*按键和usb检测*/
+
+
 
 /*初始化*/
-void lk_task_init(void)
+void lk_task(void)
 { 
-  lk_borad_init();           /*board init*/      
    
   lk_taskTime_init();   
-
+ 
   #if ENABLE_POWER_CTL
     powerKey_ctl();
   #endif     
@@ -316,9 +302,20 @@ void lk_task_init(void)
   #endif    
 
 
-
-
 }
+
+
+int main(void)
+{
+  lk_task();
+   while(1)
+   {
+     rt_thread_mdelay(1000);
+    // rt_kprintf("zjk test...\r\n");
+   }
+}
+
+
 
 
 /**
